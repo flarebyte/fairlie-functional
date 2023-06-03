@@ -100,3 +100,31 @@ export function bind2<V, A, B, C, E>(
     }
   };
 }
+
+/**
+ * A function that connects multiple switch functions
+   together, passing the success output of the current function to the input
+   of the next function, and propagating the failure output to the error
+   track.
+ * @param functions the first switch function
+ * @returns a successful result or a failure
+ */
+export function bindSimilar<A, E>(
+  functions: [
+    SwitchFunction<A, A, E>,
+    SwitchFunction<A, A, E>,
+    ...SwitchFunction<A, A, E>[]
+  ]
+): SwitchFunction<A, A, E> {
+  return (value: A) => {
+    let valueResult: Result<A, E> = succeed(value);
+    for (const f of functions) {
+      if (valueResult.status === 'success') {
+        valueResult = f(valueResult.value);
+      } else {
+        return valueResult;
+      }
+    }
+    return valueResult;
+  };
+}

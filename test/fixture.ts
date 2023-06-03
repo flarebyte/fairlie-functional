@@ -16,6 +16,14 @@ export const max20char = (text: string): Result<string, string> => {
   return succeed(text);
 };
 
+export const notDot = (text: string): Result<string, string> => {
+  if (text.includes('.')) {
+    return willFail('Should not have any dots');
+  }
+
+  return succeed(text);
+};
+
 export const valueifyShort = (
   value: string
 ): Result<{value: string}, string> => {
