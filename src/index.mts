@@ -1,42 +1,71 @@
 /** Represent a successful result */
 export type Success<A> = {
-    status: 'success';
-    value: A;
-  };
-  
-  /** Represent a failed result */
+  status: 'success';
+  value: A;
+};
+
+/** Represent a failed result */
 export type Failure<E> = {
-    status: 'failure';
-    error: E;
+  status: 'failure';
+  error: E;
+};
+
+export type Result<A, E> = Success<A> | Failure<E>;
+
+/**
+ * A function that has one input and a success/failure output.
+ * It can be seen as a railway switch that directs the input to either the success track or the failure track.
+ */
+export type SwitchFunction<V, A, E> = (value: V) => Result<A, E>;
+
+/**
+ * Return a successful response
+ * @param value a successful value
+ */
+export const succeed = <A>(value: A): Success<A> => ({
+  status: 'success',
+  value,
+});
+
+/**
+ * Return a failure result
+ * @param error an error value
+ */
+export const willFail = <E>(error: E): Failure<E> => ({
+  status: 'failure',
+  error,
+});
+
+/**
+ * Return the successful value otherwise a default value
+ * @param defaultValue the defauly
+ * @returns
+ */
+export const withDefault =
+  <A, E>(defaultValue: A) =>
+  (result: Result<A, E>): A =>
+    result.status === 'success' ? result.value : defaultValue;
+
+/**
+ * A function that connects two switch functions
+   together, passing the success output of the first function to the input
+   of the second function, and propagating the failure output to the error
+   track.
+ * @param f1 the first switch function
+ * @param f2 the second switch function
+ * @returns a successful result or a failure
+ */
+export function bind1<V, A, B, E>(
+  f1: SwitchFunction<V, A, E>,
+  f2: SwitchFunction<A, B, E>
+): SwitchFunction<V, B, E> {
+  return (input: V) => {
+    const result1 = f1(input);
+    if (result1.status === 'success') {
+      const result2 = f2(result1.value);
+      return result2;
+    } else {
+      return result1;
+    }
   };
-  
-  export type Result<A, E> = Success<A> | Failure<E>;
-  
-  /**
-   * Return a successful response
-   * @param value a successful value
-   */
-  export const succeed = <A,>(value: A): Success<A> => ({
-    status: 'success',
-    value,
-  });
-  
-  /**
-   * Return a failure result
-   * @param error an error value
-   */
-  export const willFail = <E,>(error: E): Failure<E> => ({
-    status: 'failure',
-    error,
-  });
-  
-  /**
-   * Return the successful value otherwise a default value
-   * @param defaultValue the defauly
-   * @returns 
-   */
-  export const withDefault =
-    <A, E>(defaultValue: A) =>
-    (result: Result<A, E>): A=>
-      result.status === 'success' ? result.value : defaultValue;
-  
+}
