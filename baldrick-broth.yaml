@@ -12,6 +12,8 @@ model:
       - You can easily combine multiple functions into a single unit using operators
     links:
       - "[Npm dependencies](DEPENDENCIES.md)"
+    tags:
+      - image-hero
   github:
     account: flarebyte
     name: fairlie-functional

@@ -11,10 +11,13 @@ size](https://img.shields.io/bundlephobia/min/fairlie-functional)
 
 ![Experimental](https://img.shields.io/badge/status-experimental-blue)
 
-> fairlie-functional
+> A lightweight functional library in typescript that helps dealing with
+> failures the rail way
 
 A lightweight functional library in typescript that helps dealing with
 failures the rail way
+
+![Hero image for fairlie-functional](fairlie-functional-hero-512.jpeg)
 
 Highlights:
 
