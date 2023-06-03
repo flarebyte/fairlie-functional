@@ -10,7 +10,7 @@ export const min3char = (text: string): Result<string, string> => {
 
 export const max20char = (text: string): Result<string, string> => {
   if (text.length > 20) {
-    return willFail('Not more than characters');
+    return willFail('Not more than 20 characters');
   }
 
   return succeed(text);

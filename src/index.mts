@@ -59,10 +59,41 @@ export function bind1<V, A, B, E>(
   f1: SwitchFunction<V, A, E>,
   f2: SwitchFunction<A, B, E>
 ): SwitchFunction<V, B, E> {
+  return (value: V) => {
+    const result1 = f1(value);
+    if (result1.status === 'success') {
+      const result2 = f2(result1.value);
+      return result2;
+    } else {
+      return result1;
+    }
+  };
+}
+
+/**
+ * A function that connects three switch functions
+   together, passing the success output of the first function to the input
+   of the second function, and then passing the success output of the second function
+   to the third function and propagating the failure output to the error
+   track.
+ * @param f1 the first switch function
+ * @param f2 the second switch function
+ * @param f3 the third switch function
+ * @returns a successful result or a failure
+ */
+export function bind2<V, A, B, C, E>(
+  f1: SwitchFunction<V, A, E>,
+  f2: SwitchFunction<A, B, E>,
+  f3: SwitchFunction<B, C, E>
+): SwitchFunction<V, C, E> {
   return (input: V) => {
     const result1 = f1(input);
     if (result1.status === 'success') {
       const result2 = f2(result1.value);
+      if (result2.status === 'success') {
+        const result3 = f3(result2.value);
+        return result3;
+      }
       return result2;
     } else {
       return result1;
