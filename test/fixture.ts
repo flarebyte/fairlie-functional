@@ -33,3 +33,7 @@ export const valueifyShort = (
 
   return succeed({value});
 };
+
+export const addContextToError = (message: string): Result<string, string> => {
+  return willFail(`Account 123. London. ${message}`);
+};

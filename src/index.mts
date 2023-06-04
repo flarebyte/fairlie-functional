@@ -55,7 +55,7 @@ export const withDefault =
  * @param f2 the second switch function
  * @returns a successful result or a failure
  */
-export function bind1<V, A, B, E>(
+export function bindTwo<V, A, B, E>(
   f1: SwitchFunction<V, A, E>,
   f2: SwitchFunction<A, B, E>
 ): SwitchFunction<V, B, E> {
@@ -81,7 +81,7 @@ export function bind1<V, A, B, E>(
  * @param f3 the third switch function
  * @returns a successful result or a failure
  */
-export function bind2<V, A, B, C, E>(
+export function bindThree<V, A, B, C, E>(
   f1: SwitchFunction<V, A, E>,
   f2: SwitchFunction<A, B, E>,
   f3: SwitchFunction<B, C, E>
@@ -128,3 +128,21 @@ export function bindSimilar<A, E>(
     return valueResult;
   };
 }
+
+/**
+ * The bypass function takes a switch function that expects a failure value as an input 
+ * and returns a success or failure value as an output
+ * @param altFunc the first switch function
+ * @returns a successful result or a failure
+ */
+   export function bypass<V, A, E>(
+    altFunc: SwitchFunction<E, A, E>,
+  ): (value: Result<V, E>) => Result<V | A, E> {
+    return (result: Result<V, E>) => {
+      if (result.status === 'success') {
+        return result;
+      } else {
+        return altFunc(result.error);
+      }
+    };
+  }

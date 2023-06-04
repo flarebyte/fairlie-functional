@@ -1,31 +1,37 @@
 import {test} from 'node:test';
-import {bind1, bind2, bindSimilar} from '../src/index.mjs';
-import {max20char, min3char, notDot, valueifyShort} from './fixture.js';
+import {bindTwo, bindThree, bindSimilar, bypass} from '../src/index.mjs';
+import {
+  addContextToError,
+  max20char,
+  min3char,
+  notDot,
+  valueifyShort,
+} from './fixture.js';
 import {assertFailedResult, assertSuccessfulResult} from './assert-utils.js';
 
 test('bind two switch functions', () => {
-  const f = bind1(min3char, valueifyShort);
+  const f = bindTwo(min3char, valueifyShort);
   const text = 'short text';
   const actual = f(text);
   assertSuccessfulResult(actual, {value: text});
 });
 
 test('bind two switch functions and fail at first', () => {
-  const f = bind1(min3char, valueifyShort);
+  const f = bindTwo(min3char, valueifyShort);
   const text = 'o';
   const actual = f(text);
   assertFailedResult(actual, 'At least 3 characters');
 });
 
 test('bind three switch functions', () => {
-  const f = bind2(min3char, max20char, valueifyShort);
+  const f = bindThree(min3char, max20char, valueifyShort);
   const text = 'short text';
   const actual = f(text);
   assertSuccessfulResult(actual, {value: text});
 });
 
 test('bind three switch functions and fail at first', () => {
-  const f = bind2(min3char, max20char, valueifyShort);
+  const f = bindThree(min3char, max20char, valueifyShort);
   const text = 'way to many characters in this sentence';
   const actual = f(text);
   assertFailedResult(actual, 'Not more than 20 characters');
@@ -57,4 +63,18 @@ test('bind three similar switch functions and fail at dot', () => {
   const text = 'escape with dot .';
   const actual = f(text);
   assertFailedResult(actual, 'Should not have any dots');
+});
+
+test('by pass should be triggered by an error', () => {
+  const f = bypass(addContextToError);
+  const text = 'o';
+  const actual = f(min3char(text));
+  assertFailedResult(actual, 'Account 123. London. At least 3 characters');
+});
+
+test('by pass should ignore success', () => {
+  const f = bypass(addContextToError);
+  const text = 'a great story';
+  const actual = f(min3char(text));
+  assertSuccessfulResult(actual, 'a great story');
 });
