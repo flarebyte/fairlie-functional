@@ -171,3 +171,26 @@ export function bindSimilar<A, E>(
       }
     };
   }
+
+  /**
+ * The fallback function takes a switch function that expects the input value as an input 
+ * and returns a success or failure value as an output. In short, it will fallback to that
+ * function if the first fail
+ * @param f1 the first switch function
+ * @param fallbackF2 the fallback function
+ * @returns a successful result or a failure
+ */
+  export function orFallback<V, A, E>(
+    f1: SwitchFunction<V, A, E>,
+    fallbackF2: SwitchFunction<V, A, E>
+  ): SwitchFunction<V, A, E> {
+    return (value: V) => {
+      const result1 = f1(value);
+      if (result1.status === 'success') {
+        return result1;
+      } else {
+        const resultFallback = fallbackF2(value)
+        return resultFallback;
+      }
+    };
+  }

@@ -5,9 +5,11 @@ import {
   bindSimilar,
   bypass,
   recover,
+  orFallback,
 } from '../src/index.mjs';
 import {
   addContextToError,
+  fallbackToUppercase,
   max20char,
   min3char,
   notDot,
@@ -98,4 +100,11 @@ test('recover should ignore success', () => {
   const text = 'a great story';
   const actual = f(min3char(text));
   assertSuccessfulResult(actual, 'a great story');
+});
+
+test('fallback should be triggered by an error and retry with fallback function', () => {
+  const f = orFallback(min3char, fallbackToUppercase);
+  const text = 'z';
+  const actual = f(text);
+  assertSuccessfulResult(actual, 'Z');
 });

@@ -41,3 +41,7 @@ export const addContextToError = (message: string): Result<string, string> => {
 export const recoverToGood = (_message: string): Success<string> => {
   return succeed('good');
 };
+
+export const fallbackToUppercase = (text: string): Result<string, string> => {
+  return succeed(text.toUpperCase());
+};
