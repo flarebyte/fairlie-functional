@@ -8,9 +8,12 @@ import {
   recover,
   orFallback,
   withDefault,
+  bindTwoAsync,
 } from '../src/index.mjs';
 import {
   addContextToError,
+  asyncMin3char,
+  asyncValueifyShort,
   fallbackToUppercase,
   max20char,
   min3char,
@@ -39,10 +42,24 @@ test('bind two switch functions', () => {
   assertSuccessfulResult(actual, {value: text});
 });
 
+test('bind two switch functions asynchronously', async () => {
+  const f = bindTwoAsync(asyncMin3char, asyncValueifyShort);
+  const text = 'short text';
+  const actual = await f(text);
+  assertSuccessfulResult(actual, {value: text});
+});
+
 test('bind two switch functions and fail at first', () => {
   const f = bindTwo(min3char, valueifyShort);
   const text = 'o';
   const actual = f(text);
+  assertFailedResult(actual, 'At least 3 characters');
+});
+
+test('bind two switch functions and fail at first asynchronously', async () => {
+  const f = bindTwoAsync(asyncMin3char, asyncValueifyShort);
+  const text = 'o';
+  const actual = await f(text);
   assertFailedResult(actual, 'At least 3 characters');
 });
 

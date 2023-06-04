@@ -67,7 +67,7 @@ export const withDefault =
    track.
  * @param f1 the first switch function
  * @param f2 the second switch function
- * @returns a successful result or a failure
+ * @returns a composite switch function
  */
 export function bindTwo<V, A, B, E>(
   f1: SwitchFunction<V, A, E>,
@@ -83,6 +83,30 @@ export function bindTwo<V, A, B, E>(
     }
   };
 }
+
+/**
+ * A function that connects two asynchronous switch functions
+   together, passing the success output of the first function to the input
+   of the second function, and propagating the failure output to the error
+   track.
+ * @param f1 the first asynchronous switch function
+ * @param f2 the second asynchronous switch function
+ * @returns a composite async switch function
+ */
+   export function bindTwoAsync<V, A, B, E>(
+    f1: AsyncSwitchFunction<V, A, E>,
+    f2: AsyncSwitchFunction<A, B, E>
+  ): AsyncSwitchFunction<V, B, E> {
+    return async (value: V) => {
+      const result1 = await f1(value);
+      if (result1.status === 'success') {
+        const result2 = await f2(result1.value);
+        return result2;
+      } else {
+        return result1;
+      }
+    };
+  }
 
 /**
  * A function that connects three switch functions
