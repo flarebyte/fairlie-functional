@@ -1,4 +1,4 @@
-import {type Result, willFail, succeed} from '../src/index.mjs';
+import {type Result, willFail, succeed, type Success} from '../src/index.mjs';
 
 export const min3char = (text: string): Result<string, string> => {
   if (text.length < 3) {
@@ -36,4 +36,8 @@ export const valueifyShort = (
 
 export const addContextToError = (message: string): Result<string, string> => {
   return willFail(`Account 123. London. ${message}`);
+};
+
+export const recoverToGood = (_message: string): Success<string> => {
+  return succeed('good');
 };

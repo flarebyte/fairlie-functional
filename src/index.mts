@@ -19,6 +19,13 @@ export type Result<A, E> = Success<A> | Failure<E>;
 export type SwitchFunction<V, A, E> = (value: V) => Result<A, E>;
 
 /**
+ * A function that has one input and a success/failure output.
+ * It can be seen as a railway switch that directs the input to either the success track or the failure track.
+ */
+export type RecoverSwitchFunction<A, E> = (error: E) => Success<A>;
+
+
+/**
  * Return a successful response
  * @param value a successful value
  */
@@ -137,6 +144,24 @@ export function bindSimilar<A, E>(
  */
    export function bypass<V, A, E>(
     altFunc: SwitchFunction<E, A, E>,
+  ): (value: Result<V, E>) => Result<V | A, E> {
+    return (result: Result<V, E>) => {
+      if (result.status === 'success') {
+        return result;
+      } else {
+        return altFunc(result.error);
+      }
+    };
+  }
+
+  /**
+ * The recover function takes a recovery function that expects a failure value as an input
+ * and returns only a success value as an output
+ * @param altFunc the first switch function
+ * @returns a successful result or a failure
+ */
+  export function recover<V, A, E>(
+    altFunc: RecoverSwitchFunction<A, E>,
   ): (value: Result<V, E>) => Result<V | A, E> {
     return (result: Result<V, E>) => {
       if (result.status === 'success') {

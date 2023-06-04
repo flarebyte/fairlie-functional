@@ -1,10 +1,17 @@
 import {test} from 'node:test';
-import {bindTwo, bindThree, bindSimilar, bypass} from '../src/index.mjs';
+import {
+  bindTwo,
+  bindThree,
+  bindSimilar,
+  bypass,
+  recover,
+} from '../src/index.mjs';
 import {
   addContextToError,
   max20char,
   min3char,
   notDot,
+  recoverToGood,
   valueifyShort,
 } from './fixture.js';
 import {assertFailedResult, assertSuccessfulResult} from './assert-utils.js';
@@ -65,15 +72,29 @@ test('bind three similar switch functions and fail at dot', () => {
   assertFailedResult(actual, 'Should not have any dots');
 });
 
-test('by pass should be triggered by an error', () => {
+test('bypass should be triggered by an error', () => {
   const f = bypass(addContextToError);
   const text = 'o';
   const actual = f(min3char(text));
   assertFailedResult(actual, 'Account 123. London. At least 3 characters');
 });
 
-test('by pass should ignore success', () => {
+test('bypass should ignore success', () => {
   const f = bypass(addContextToError);
+  const text = 'a great story';
+  const actual = f(min3char(text));
+  assertSuccessfulResult(actual, 'a great story');
+});
+
+test('recover should be triggered by an error and recover with valid result', () => {
+  const f = recover(recoverToGood);
+  const text = 'o';
+  const actual = f(min3char(text));
+  assertSuccessfulResult(actual, 'good');
+});
+
+test('recover should ignore success', () => {
+  const f = recover(recoverToGood);
   const text = 'a great story';
   const actual = f(min3char(text));
   assertSuccessfulResult(actual, 'a great story');
