@@ -1,4 +1,5 @@
 import {test} from 'node:test';
+import assert from 'node:assert/strict';
 import {
   bindTwo,
   bindThree,
@@ -6,6 +7,7 @@ import {
   bypass,
   recover,
   orFallback,
+  withDefault,
 } from '../src/index.mjs';
 import {
   addContextToError,
@@ -17,6 +19,18 @@ import {
   valueifyShort,
 } from './fixture.js';
 import {assertFailedResult, assertSuccessfulResult} from './assert-utils.js';
+
+test('withDefault should return the successful value', () => {
+  const text = 'many chars';
+  const actual = withDefault('default')(min3char(text));
+  assert.equal(actual, text);
+});
+
+test('withDefault should fallback to default if an error', () => {
+  const text = 'o';
+  const actual = withDefault('default')(min3char(text));
+  assert.equal(actual, 'default');
+});
 
 test('bind two switch functions', () => {
   const f = bindTwo(min3char, valueifyShort);

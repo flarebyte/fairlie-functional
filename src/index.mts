@@ -19,6 +19,13 @@ export type Result<A, E> = Success<A> | Failure<E>;
 export type SwitchFunction<V, A, E> = (value: V) => Result<A, E>;
 
 /**
+ * An asynchronous function that has one input and a success/failure output.
+ * It can be seen as a railway switch that directs the input to either the success track or the failure track.
+ */
+export type AsyncSwitchFunction<V, A, E> = (value: V) => Promise<Result<A, E>>;
+
+
+/**
  * A function that has one input and a success/failure output.
  * It can be seen as a railway switch that directs the input to either the success track or the failure track.
  */
@@ -45,8 +52,8 @@ export const willFail = <E>(error: E): Failure<E> => ({
 
 /**
  * Return the successful value otherwise a default value
- * @param defaultValue the defauly
- * @returns
+ * @param defaultValue the default value
+ * @returns the successful otherwise the default value
  */
 export const withDefault =
   <A, E>(defaultValue: A) =>
