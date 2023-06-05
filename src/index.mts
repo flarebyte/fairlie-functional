@@ -140,6 +140,37 @@ export function bindThree<V, A, B, C, E>(
 }
 
 /**
+ * A function that connects three switch functions
+   together, passing the success output of the first function to the input
+   of the second function, and then passing the success output of the second function
+   to the third function and propagating the failure output to the error
+   track.
+ * @param f1 the first switch function
+ * @param f2 the second switch function
+ * @param f3 the third switch function
+ * @returns a successful result or a failure
+ */
+   export function bindThreeAsync<V, A, B, C, E>(
+    f1: AsyncSwitchFunction<V, A, E>,
+    f2: AsyncSwitchFunction<A, B, E>,
+    f3: AsyncSwitchFunction<B, C, E>
+  ): AsyncSwitchFunction<V, C, E> {
+    return async (input: V) => {
+      const result1 = await f1(input);
+      if (result1.status === 'success') {
+        const result2 = await f2(result1.value);
+        if (result2.status === 'success') {
+          const result3 = await f3(result2.value);
+          return result3;
+        }
+        return result2;
+      } else {
+        return result1;
+      }
+    };
+  }
+
+/**
  * A function that connects multiple switch functions
    together, passing the success output of the current function to the input
    of the next function, and propagating the failure output to the error

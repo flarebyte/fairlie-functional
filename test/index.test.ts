@@ -9,9 +9,11 @@ import {
   orFallback,
   withDefault,
   bindTwoAsync,
+  bindThreeAsync,
 } from '../src/index.mjs';
 import {
   addContextToError,
+  asyncMax20char,
   asyncMin3char,
   asyncValueifyShort,
   fallbackToUppercase,
@@ -68,6 +70,20 @@ test('bind three switch functions', () => {
   const text = 'short text';
   const actual = f(text);
   assertSuccessfulResult(actual, {value: text});
+});
+
+test('bind three switch functions asynchronously', async () => {
+  const f = bindThreeAsync(asyncMin3char, asyncMax20char, asyncValueifyShort);
+  const text = 'short text';
+  const actual = await f(text);
+  assertSuccessfulResult(actual, {value: text});
+});
+
+test('bind three switch functions and fail at first asynchronously', async () => {
+  const f = bindThreeAsync(asyncMin3char, asyncMax20char, asyncValueifyShort);
+  const text = 'way to many characters in this sentence';
+  const actual = await f(text);
+  assertFailedResult(actual, 'Not more than 20 characters');
 });
 
 test('bind three switch functions and fail at first', () => {
