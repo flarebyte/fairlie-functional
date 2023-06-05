@@ -19,6 +19,12 @@ they can be carried-on or re-visited in the future.
 > there are snow-capped mountains in a Japanese manga style. The drawing
 > is in black and white with high contrast and dynamic lines.
 
+## Railtrack image
+
+> A bird eye view of a railway track with just a few branches and
+> junctions. The track is surrounded by grass and trees. The image is in
+> black and white technical drawing architecture style
+
 ## Glossary
 
 -   **Railway oriented programming**: A functional approach to the
@@ -44,3 +50,5 @@ they can be carried-on or re-visited in the future.
 -   **Recover function**: A function that allows a failure output to be
     converted into a success output, thus moving from the error track to
     the success track. In F#, it is defined as `let recover recoveryFunction input = match input with | Success s -> Success s | Failure f -> recoveryFunction f`.
+
+![Railtrack](/railtrack-512.jpeg)
