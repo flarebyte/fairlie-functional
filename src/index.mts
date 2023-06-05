@@ -24,6 +24,15 @@ export type SwitchFunction<V, A, E> = (value: V) => Result<A, E>;
  */
 export type AsyncSwitchFunction<V, A, E> = (value: V) => Promise<Result<A, E>>;
 
+/**
+ * A function that takes an input and return an output
+ */
+export type TransformFunction<V, A> = (value: V)=> A
+
+/**
+ * An asynchronous function that takes an input and return an output
+ */
+export type AsyncTransformFunction<V, A> = (value: V)=> Promise<A>
 
 /**
  * A function that has one input and a success/failure output.
@@ -41,7 +50,7 @@ export type AsyncRecoverSwitchFunction<A, E> = (error: E) => Promise<Success<A>>
  * Return a successful response
  * @param value a successful value
  */
-export const succeed = <A>(value: A): Success<A> => ({
+export const succeed = <A,>(value: A): Success<A> => ({
   status: 'success',
   value,
 });
@@ -50,7 +59,7 @@ export const succeed = <A>(value: A): Success<A> => ({
  * Return a failure result
  * @param error an error value
  */
-export const willFail = <E>(error: E): Failure<E> => ({
+export const willFail = <E,>(error: E): Failure<E> => ({
   status: 'failure',
   error,
 });
@@ -349,3 +358,29 @@ export function bindSimilarAsync<A, E>(
       }
     };
   }
+
+  /**
+   * Take a simple transformation function which takes an input and return an output and
+   * convert it to a switch
+   * @param transform a transformer function
+   * @returns a switch function
+   */
+  export function transformToSwitch<V,A,E>(transform: TransformFunction<V,A>): SwitchFunction<V,A,E> {
+    return (value: V) => {
+      const transformed = transform(value)
+      return succeed(transformed);
+    }
+  }
+
+    /**
+   * Take a simple transformation function which takes an input and return an output and
+   * convert it to an asynchronous switch
+   * @param transform a transformer function
+   * @returns an asynchronous switch function
+   */
+    export function transformToAsyncSwitch<V,A,E>(transform: TransformFunction<V,A>): AsyncSwitchFunction<V,A,E> {
+      return async (value: V) => {
+        const transformed = transform(value)
+        return succeed(transformed);
+      }
+    }
