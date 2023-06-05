@@ -70,10 +70,22 @@ export const addContextToError = (message: string): Result<string, string> => {
   return willFail(`Account 123. London. ${message}`);
 };
 
+export const asyncAddContextToError = async (message: string) => {
+  return willFail(`Account 123. London. ${message}`);
+};
+
 export const recoverToGood = (_message: string): Success<string> => {
   return succeed('good');
 };
 
+export const asyncRecoverToGood = async (_message: string) => {
+  return succeed('good');
+};
+
 export const fallbackToUppercase = (text: string): Result<string, string> => {
+  return succeed(text.toUpperCase());
+};
+
+export const asyncFallbackToUppercase = async (text: string) => {
   return succeed(text.toUpperCase());
 };

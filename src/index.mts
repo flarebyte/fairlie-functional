@@ -31,6 +31,11 @@ export type AsyncSwitchFunction<V, A, E> = (value: V) => Promise<Result<A, E>>;
  */
 export type RecoverSwitchFunction<A, E> = (error: E) => Success<A>;
 
+/**
+ * An asynchronous function that has one input and a success/failure output.
+ * It can be seen as a railway switch that directs the input to either the success track or the failure track.
+ */
+export type AsyncRecoverSwitchFunction<A, E> = (error: E) => Promise<Success<A>>;
 
 /**
  * Return a successful response
@@ -246,6 +251,24 @@ export function bindSimilarAsync<A, E>(
   }
 
   /**
+ * The bypass function takes an asynchronous switch function that expects a failure value as an input 
+ * and returns a success or failure value as an output
+ * @param altFunc the first switch function
+ * @returns a successful result or a failure
+ */
+  export function bypassAsync<V, A, E>(
+    altFunc: AsyncSwitchFunction<E, A, E>,
+  ): (value: Result<V, E>) => Promise<Result<V | A, E>> {
+    return async (result: Result<V, E>) => {
+      if (result.status === 'success') {
+        return result;
+      } else {
+        return await altFunc(result.error);
+      }
+    };
+  }
+
+/**
  * The recover function takes a recovery function that expects a failure value as an input
  * and returns only a success value as an output
  * @param altFunc the first switch function
@@ -259,6 +282,24 @@ export function bindSimilarAsync<A, E>(
         return result;
       } else {
         return altFunc(result.error);
+      }
+    };
+  }
+
+  /**
+ * The recover function takes a asynchronous recovery function that expects a failure value as an input
+ * and returns only a success value as an output
+ * @param altFunc the first switch function
+ * @returns a successful result or a failure
+ */
+  export function recoverAsync<V, A, E>(
+    altFunc: AsyncRecoverSwitchFunction<A, E>,
+  ): (value: Result<V, E>) => Promise<Result<V | A, E>> {
+    return async (result: Result<V, E>) => {
+      if (result.status === 'success') {
+        return result;
+      } else {
+        return await altFunc(result.error);
       }
     };
   }
@@ -281,6 +322,29 @@ export function bindSimilarAsync<A, E>(
         return result1;
       } else {
         const resultFallback = fallbackF2(value)
+        return resultFallback;
+      }
+    };
+  }
+
+  /**
+ * The fallback function takes an asynchronous switch function that expects the input value as an input 
+ * and returns a success or failure value as an output. In short, it will fallback to that
+ * function if the first fail
+ * @param f1 the first switch function
+ * @param fallbackF2 the fallback function
+ * @returns a successful result or a failure
+ */
+  export function orFallbackAsync<V, A, E>(
+    f1: AsyncSwitchFunction<V, A, E>,
+    fallbackF2: AsyncSwitchFunction<V, A, E>
+  ): AsyncSwitchFunction<V, A, E> {
+    return async (value: V) => {
+      const result1 = await f1(value);
+      if (result1.status === 'success') {
+        return result1;
+      } else {
+        const resultFallback = await fallbackF2(value)
         return resultFallback;
       }
     };

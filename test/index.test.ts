@@ -11,12 +11,18 @@ import {
   bindTwoAsync,
   bindThreeAsync,
   bindSimilarAsync,
+  bypassAsync,
+  recoverAsync,
+  orFallbackAsync,
 } from '../src/index.mjs';
 import {
   addContextToError,
+  asyncAddContextToError,
+  asyncFallbackToUppercase,
   asyncMax20char,
   asyncMin3char,
   asyncNotDot,
+  asyncRecoverToGood,
   asyncValueifyShort,
   fallbackToUppercase,
   max20char,
@@ -144,10 +150,24 @@ test('bypass should be triggered by an error', () => {
   assertFailedResult(actual, 'Account 123. London. At least 3 characters');
 });
 
+test('bypass should be triggered by an error asynchronously', async () => {
+  const f = bypassAsync(asyncAddContextToError);
+  const text = 'o';
+  const actual = await f(await asyncMin3char(text));
+  assertFailedResult(actual, 'Account 123. London. At least 3 characters');
+});
+
 test('bypass should ignore success', () => {
   const f = bypass(addContextToError);
   const text = 'a great story';
   const actual = f(min3char(text));
+  assertSuccessfulResult(actual, 'a great story');
+});
+
+test('bypass should ignore success asynchronously', async () => {
+  const f = bypassAsync(asyncAddContextToError);
+  const text = 'a great story';
+  const actual = await f(await asyncMin3char(text));
   assertSuccessfulResult(actual, 'a great story');
 });
 
@@ -158,6 +178,13 @@ test('recover should be triggered by an error and recover with valid result', ()
   assertSuccessfulResult(actual, 'good');
 });
 
+test('recover should be triggered by an error and recover with valid result asynchronously', async () => {
+  const f = recoverAsync(asyncRecoverToGood);
+  const text = 'o';
+  const actual = await f(await asyncMin3char(text));
+  assertSuccessfulResult(actual, 'good');
+});
+
 test('recover should ignore success', () => {
   const f = recover(recoverToGood);
   const text = 'a great story';
@@ -165,9 +192,23 @@ test('recover should ignore success', () => {
   assertSuccessfulResult(actual, 'a great story');
 });
 
+test('recover should ignore success asynchronously', async () => {
+  const f = recoverAsync(asyncRecoverToGood);
+  const text = 'a great story';
+  const actual = await f(await asyncMin3char(text));
+  assertSuccessfulResult(actual, 'a great story');
+});
+
 test('fallback should be triggered by an error and retry with fallback function', () => {
   const f = orFallback(min3char, fallbackToUppercase);
   const text = 'z';
   const actual = f(text);
+  assertSuccessfulResult(actual, 'Z');
+});
+
+test('fallback should be triggered by an error and retry with fallback function asynchronously', async () => {
+  const f = orFallbackAsync(asyncMin3char, asyncFallbackToUppercase);
+  const text = 'z';
+  const actual = await f(text);
   assertSuccessfulResult(actual, 'Z');
 });
