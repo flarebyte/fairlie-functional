@@ -14,6 +14,8 @@ import {
   bypassAsync,
   recoverAsync,
   orFallbackAsync,
+  transformToSwitch,
+  transformToAsyncSwitch,
 } from '../src/index.mjs';
 import {
   addContextToError,
@@ -211,4 +213,18 @@ test('fallback should be triggered by an error and retry with fallback function 
   const text = 'z';
   const actual = await f(text);
   assertSuccessfulResult(actual, 'Z');
+});
+
+test('transform to switch', () => {
+  const multiplyByTwo = (value: number) => value * 2;
+  const f = transformToSwitch(multiplyByTwo);
+  const actual = f(3);
+  assertSuccessfulResult(actual, 6);
+});
+
+test('transform to switch asynchronous', async () => {
+  const multiplyByTwo = (value: number) => value * 2;
+  const f = transformToAsyncSwitch(multiplyByTwo);
+  const actual = await f(3);
+  assertSuccessfulResult(actual, 6);
 });

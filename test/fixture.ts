@@ -1,4 +1,10 @@
-import {type Result, willFail, succeed, type Success} from '../src/index.mjs';
+import {
+  type Result,
+  willFail,
+  succeed,
+  type Success,
+  transformToSwitch,
+} from '../src/index.mjs';
 
 export const min3char = (text: string): Result<string, string> => {
   if (text.length < 3) {
