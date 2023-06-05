@@ -10,11 +10,13 @@ import {
   withDefault,
   bindTwoAsync,
   bindThreeAsync,
+  bindSimilarAsync,
 } from '../src/index.mjs';
 import {
   addContextToError,
   asyncMax20char,
   asyncMin3char,
+  asyncNotDot,
   asyncValueifyShort,
   fallbackToUppercase,
   max20char,
@@ -100,10 +102,24 @@ test('bind three similar switch functions', () => {
   assertSuccessfulResult(actual, 'short text');
 });
 
+test('bind three similar switch functions asynchronously', async () => {
+  const f = bindSimilarAsync([asyncMin3char, asyncMax20char, asyncNotDot]);
+  const text = 'short text';
+  const actual = await f(text);
+  assertSuccessfulResult(actual, 'short text');
+});
+
 test('bind two similar switch functions and fail with too many chars', () => {
   const f = bindSimilar([min3char, max20char]);
   const text = 'way to many characters in this sentence';
   const actual = f(text);
+  assertFailedResult(actual, 'Not more than 20 characters');
+});
+
+test('bind two similar switch functions and fail with too many chars asynchronously', async () => {
+  const f = bindSimilarAsync([asyncMin3char, asyncMax20char]);
+  const text = 'way to many characters in this sentence';
+  const actual = await f(text);
   assertFailedResult(actual, 'Not more than 20 characters');
 });
 

@@ -140,7 +140,7 @@ export function bindThree<V, A, B, C, E>(
 }
 
 /**
- * A function that connects three switch functions
+ * A function that connects three switch functions asynchronously
    together, passing the success output of the first function to the input
    of the second function, and then passing the success output of the second function
    to the third function and propagating the failure output to the error
@@ -170,7 +170,8 @@ export function bindThree<V, A, B, C, E>(
     };
   }
 
-/**
+
+  /**
  * A function that connects multiple switch functions
    together, passing the success output of the current function to the input
    of the next function, and propagating the failure output to the error
@@ -178,18 +179,46 @@ export function bindThree<V, A, B, C, E>(
  * @param functions the first switch function
  * @returns a successful result or a failure
  */
-export function bindSimilar<A, E>(
+   export function bindSimilar<A, E>(
+    functions: [
+      SwitchFunction<A, A, E>,
+      SwitchFunction<A, A, E>,
+      ...SwitchFunction<A, A, E>[]
+    ]
+  ): SwitchFunction<A, A, E> {
+    return (value: A) => {
+      let valueResult: Result<A, E> = succeed(value);
+      for (const f of functions) {
+        if (valueResult.status === 'success') {
+          valueResult = f(valueResult.value);
+        } else {
+          return valueResult;
+        }
+      }
+      return valueResult;
+    };
+  }
+
+/**
+ * A function that connects multiple switch functions asynchronously
+   together, passing the success output of the current function to the input
+   of the next function, and propagating the failure output to the error
+   track.
+ * @param functions the first switch function
+ * @returns a successful result or a failure
+ */
+export function bindSimilarAsync<A, E>(
   functions: [
-    SwitchFunction<A, A, E>,
-    SwitchFunction<A, A, E>,
-    ...SwitchFunction<A, A, E>[]
+    AsyncSwitchFunction<A, A, E>,
+    AsyncSwitchFunction<A, A, E>,
+    ...AsyncSwitchFunction<A, A, E>[]
   ]
-): SwitchFunction<A, A, E> {
-  return (value: A) => {
+): AsyncSwitchFunction<A, A, E> {
+  return async (value: A) => {
     let valueResult: Result<A, E> = succeed(value);
     for (const f of functions) {
       if (valueResult.status === 'success') {
-        valueResult = f(valueResult.value);
+        valueResult = await f(valueResult.value);
       } else {
         return valueResult;
       }
