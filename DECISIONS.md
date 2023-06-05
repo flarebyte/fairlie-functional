@@ -27,27 +27,20 @@ they can be carried-on or re-visited in the future.
     next function, while the failure case bypasses the rest of the
     functions and goes to the error track.
 -   **Result type**: A type that represents either a success value or a
-    failure value. In F#, it is defined as `type
-    Result<'TSuccess,'TFailure> = | Success of 'TSuccess | Failure of
-    'TFailure`.
+    failure value. In F#, it is defined as `type Result<'TSuccess,'TFailure> = | Success of 'TSuccess | Failure of 'TFailure`.
 -   **Switch function**: A function that has one input and a
     success/failure output. It can be seen as a railway switch that directs
     the input to either the success track or the failure track.
 -   **Bind function**: A function that connects two switch functions
     together, passing the success output of the first function to the input
     of the second function, and propagating the failure output to the error
-    track. In F#, it is defined as `let bind switchFunction input = match
-    input with | Success s -> switchFunction s | Failure f -> Failure f`.
+    track. In F#, it is defined as `let bind switchFunction input = match input with | Success s -> switchFunction s | Failure f -> Failure f`.
 -   **Compose function**: A function that creates a new switch function by
     combining two switch functions using bind². In F#, it is defined as
-    `let compose switchFunction1 switchFunction2 input = bind
-    switchFunction2 (switchFunction1 input)`.
+    `let compose switchFunction1 switchFunction2 input = bind switchFunction2 (switchFunction1 input)`.
 -   **Bypass function**: A function that allows a switch function to be
     skipped in case of a failure output from a previous function. In F#, it
-    is defined as `let bypass switchFunction input = match input with |
-    Success s -> Success s | Failure f -> switchFunction f`.
+    is defined as `let bypass switchFunction input = match input with | Success s -> Success s | Failure f -> switchFunction f`.
 -   **Recover function**: A function that allows a failure output to be
     converted into a success output, thus moving from the error track to
-    the success track. In F#, it is defined as `let recover
-    recoveryFunction input = match input with | Success s -> Success s |
-    Failure f -> recoveryFunction f`.
+    the success track. In F#, it is defined as `let recover recoveryFunction input = match input with | Success s -> Success s | Failure f -> recoveryFunction f`.
