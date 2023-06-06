@@ -59,7 +59,7 @@ export const succeed = <A,>(value: A): Success<A> => ({
  * Return a failure result
  * @param error an error value
  */
-export const willFail = <E,>(error: E): Failure<E> => ({
+export const failWith = <E,>(error: E): Failure<E> => ({
   status: 'failure',
   error,
 });
