@@ -21,9 +21,11 @@ they can be carried-on or re-visited in the future.
 
 ## Railtrack image
 
-> A bird eye view of a railway track with just a few branches and
-> junctions. The track is surrounded by grass and trees. The image is in
-> black and white technical drawing architecture style
+> An image divided into two rectangles that each contains a railway track
+> seen from above (bird eye view). The first rectangle represents a
+> single track. The second rectangle represents one track that splits
+> into two. The image is a technical drawing made by an architect, ery
+> few colors, very simplified and stylised.
 
 ## Glossary
 
