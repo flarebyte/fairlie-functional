@@ -8,10 +8,30 @@ model:
       - Railway oriented programming
   readme:
     highlights:
+      - A take on Railway Oriented Programming (ROP) in typescript
       - Each function will always yield a failure or a success
       - You can easily combine multiple functions into a single unit using operators
+      - Support for promises
     links:
       - "[Npm dependencies](DEPENDENCIES.md)"
+    tags:
+      - image-hero
+    cheatsheetFormat: typescript
+    cheatsheet:
+      - title: Bind two switch functions
+        example: bindTwo(min3char, valueifyShort)('some text')
+      - title: Bind three switch functions
+        example: bindThree(min3char, max20char, valueifyShort)('some text')
+      - title: Bind three similar switch functions
+        example: bindSimilar([min3char, max20char, notDot])('some text')
+      - title: Bypass a function if it fails
+        example: bypass(addContextToError)(min3char('some text'))
+      - title: Recovers a function if it fails
+        example: recover(recoverToGood)(min3char('some text'))
+      - title: Fallback to a different function if the first fail
+        example: orFallback(min3char, fallbackToUppercase)('some text')
+      - title: Convert a simple transformer to a switch function
+        example: "transformToSwitch((value: number) => value * 2)(17)"
   github:
     account: flarebyte
     name: fairlie-functional
@@ -144,7 +164,8 @@ workflows:
       cli:
         title: Run client directly
         description: Run the client with ts-node during development
-        motivation: Simulate a CLI app in development without the need to install it
+        motivation:
+          Simulate a CLI app in development without the need to install it
           globally
         main:
           commands:
@@ -278,7 +299,8 @@ workflows:
               run: npx baldrick-dev-ts@latest markdown check -s .github/
       fix:
         title: Fix Markdown files
-        description: Modify the markdown documents to ensure they follow some consistent
+        description:
+          Modify the markdown documents to ensure they follow some consistent
           guidelines
         motivation: Make the markdown documents consistent in style
         main:
@@ -292,7 +314,8 @@ workflows:
     tasks:
       ready:
         title: Ready for publishing
-        description: Run a sequence of commands to check that the library is ready to be
+        description:
+          Run a sequence of commands to check that the library is ready to be
           published
         motivation: Detect quality flaws before pushing the code
         parameters:
@@ -413,7 +436,8 @@ workflows:
               title: Title for the pull request
               description: A short title used for the pull request
               message: Short title describing the pull request
-            - run: gh pr create --title {{escapeSpace _.category}}:{{escapeSpace _.title}}
+            - run:
+                gh pr create --title {{escapeSpace _.category}}:{{escapeSpace _.title}}
                 --body-file temp/pull_request_relevant.md
               title: Create the pull request
       publish:
@@ -486,7 +510,8 @@ workflows:
             - title: Create all github repositories
               run: mkdir -p .github/workflows .github/ISSUE_TEMPLATE
             - title: Github - create bug report form
-              run: npx baldrick-whisker@latest object .github/ISSUE_TEMPLATE/bug_report.yaml
+              run:
+                npx baldrick-whisker@latest object .github/ISSUE_TEMPLATE/bug_report.yaml
                 github:flarebyte:baldrick-reserve:data/ts/bug-report.yaml
             - title: Github - create feature request form
               run: npx baldrick-whisker@latest object
@@ -509,11 +534,13 @@ workflows:
               links:
                 - title: Specify files to ignore in source control
                   url: https://git-scm.com/docs/gitignore
-              run: npx baldrick-whisker@latest render --no-ext baldrick-broth.yaml
+              run:
+                npx baldrick-whisker@latest render --no-ext baldrick-broth.yaml
                 github:flarebyte:baldrick-reserve:template/ts/gitignore.hbs
                 .gitignore.sh
             - title: Create .editorconfig
-              run: npx baldrick-whisker@latest render --no-ext baldrick-broth.yaml
+              run:
+                npx baldrick-whisker@latest render --no-ext baldrick-broth.yaml
                 github:flarebyte:baldrick-reserve:template/editorconfig.hbs
                 .editorconfig.sh
               links:
@@ -568,7 +595,8 @@ workflows:
                 github:flarebyte:baldrick-reserve:template/ts/maintenance.hbs
                 MAINTENANCE.md
             - title: Create LICENSE
-              run: npx baldrick-whisker@latest render --no-ext baldrick-broth.yaml
+              run:
+                npx baldrick-whisker@latest render --no-ext baldrick-broth.yaml
                 github:flarebyte:baldrick-reserve:template/ts/license.hbs
                 LICENSE.md
             - title: Fix markdown
@@ -630,7 +658,8 @@ workflows:
       custom:
         title: Normalize using the custom script
         description: Normalize the project using a custom script for this project
-        motivation: Enable an imperative approach for some of normalisation to keep the
+        motivation:
+          Enable an imperative approach for some of normalisation to keep the
           model simple
         main:
           commands:
